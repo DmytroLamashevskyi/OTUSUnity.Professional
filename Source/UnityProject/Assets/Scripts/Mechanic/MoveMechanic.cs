@@ -13,10 +13,7 @@ namespace Mechanic
         private EventReceiver_Vector3 vectorReciver;
 
         [SerializeField]
-        private Vector3Bechavior bodyPosition;
-
-        [SerializeField]
-        private Transform playerPosition;
+        private Vector3Bechavior bodyPosition; 
 
         private void OnEnable()
         {
@@ -30,8 +27,7 @@ namespace Mechanic
 
         private void OnMoveVector(Vector3 newVector)
         {
-            bodyPosition.Value += newVector;
-            playerPosition.position += newVector;
+            bodyPosition.Value += newVector; 
         }
 
     }

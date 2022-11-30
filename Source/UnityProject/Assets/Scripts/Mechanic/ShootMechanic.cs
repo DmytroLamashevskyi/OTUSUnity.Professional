@@ -1,3 +1,4 @@
+using Assets.Scripts.Mechanic;
 using Elementary;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,12 +13,7 @@ namespace Mechanic
         [SerializeField]
         private TimerBehaviour countdown;
         [SerializeField]
-        private IntBehaviour speed;
-
-        [SerializeField]
-        private Transform gunPosition;
-        [SerializeField]
-        private GameObject bulletPrefub;
+        private BulletSpawner bulletSpawner;
 
 
         private void OnEnable()
@@ -36,9 +32,7 @@ namespace Mechanic
             {
                  return;
             }
-
-            var bulletInstance= Instantiate(bulletPrefub, gunPosition);
-            bulletInstance.GetComponent<Rigidbody>().AddForce(Vector3.right * speed.Value);
+            bulletSpawner.Spawn();
             countdown.ResetTime();
             countdown.Play();
 
