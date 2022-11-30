@@ -10,40 +10,31 @@ namespace Mechanic
     {
         [SerializeField]
         private EventReceiver jumpReciver;
-        [SerializeField]
-        private EventReceiver_Collision jumpCollisionReciver;
 
         [SerializeField]
-        private BoolBehaviour isJumping;
+        private BoolBehaviour isGrounded;
+
+        [SerializeField]
+        private Rigidbody rigidbody;
 
         private void OnEnable()
         {
-            jumpReciver.OnEvent += OnJumpEventRecived;
-            jumpCollisionReciver.OnCollisionEntered += OnGroundFall;
+            jumpReciver.OnEvent += OnJumpEventRecived; 
         }
 
         private void OnDisable()
         {
-            jumpReciver.OnEvent -= OnJumpEventRecived;
-            jumpCollisionReciver.OnCollisionEntered -= OnGroundFall;
+            jumpReciver.OnEvent -= OnJumpEventRecived; 
         }
 
         private void OnJumpEventRecived()
         {
-            if (!isJumping.Value)
-            {
-                isJumping.AssignTrue();
-                jumpCollisionReciver.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Impulse);
+            if (isGrounded.Value)
+            { 
+                rigidbody.AddForce(Vector3.up * 10, ForceMode.Impulse);
             }
         }
 
-        private void OnGroundFall(Collision obj)
-        {
-            if(obj.gameObject.tag == "Ground")
-            { 
-                isJumping.AssignFalse();
-            }
-        }
 
     }
 }
