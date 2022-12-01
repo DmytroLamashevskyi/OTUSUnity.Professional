@@ -15,7 +15,10 @@ namespace Elementary
         public Vector3 Value
         {
             get { return this.value; }
-            set { this.value = value; }
+            set { 
+                this.value = value;
+                this.OnValueChanged?.Invoke(value);
+            }
         }
 
         [SerializeField]

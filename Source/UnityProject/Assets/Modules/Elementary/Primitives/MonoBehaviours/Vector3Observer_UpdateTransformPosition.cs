@@ -26,7 +26,7 @@ public class Vector3Observer_UpdateTransformPosition : MonoBehaviour
     {
         foreach(var transform in transforms)
         {
-            transform.position += newVector;
+            transform.position = newVector;
         } 
     }
 }
