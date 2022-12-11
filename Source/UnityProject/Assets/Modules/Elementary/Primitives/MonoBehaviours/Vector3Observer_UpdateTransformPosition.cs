@@ -3,30 +3,27 @@ using Sirenix.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class Vector3Observer_UpdateTransformPosition : MonoBehaviour
 {
     [SerializeField]
-    private Vector3Bechavior observableVector;
+    private Transform rigidbodyTransform; 
 
     [SerializeField]
     private Transform[] transforms; 
 
-    private void OnEnable()
+    private void Update()
     {
-        observableVector.OnValueChanged += OnVectorChanged;
+        UpdateVisual(rigidbodyTransform);
     }
 
-    private void OnDisable()
-    {
-        observableVector.OnValueChanged -= OnVectorChanged;
-    }
-
-    private void OnVectorChanged(Vector3 newVector)
+    private void UpdateVisual(Transform newVector)
     {
         foreach(var transform in transforms)
         {
-            transform.position = newVector;
+            transform.position = newVector.position;
+            transform.rotation = newVector.rotation;
         } 
     }
 }

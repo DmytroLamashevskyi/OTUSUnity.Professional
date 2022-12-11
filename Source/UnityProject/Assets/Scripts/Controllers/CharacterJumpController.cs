@@ -1,5 +1,8 @@
 ﻿using Assets.Scripts.Components;
+using Assets.Scripts.Context;
 using Assets.Scripts.Entities;
+using Assets.Scripts.Services;
+using Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +14,36 @@ using static UnityEngine.InputSystem.DefaultInputActions;
 
 namespace Assets.Scripts.Controllers
 {
-    public class CharacterJumpController : MonoBehaviour
+    public class CharacterJumpController : MonoBehaviour, IStartGame, IEndGame, IConstructListener
     {
+        private IJumpComponent jumpComponent;
+        private event OnJumpHandler JumpHandler;
+        private delegate void OnJumpHandler();
 
-        [SerializeField]
-        private Entity entity; 
-          
+        void IConstructListener.Construct(GameContext context)
+        {
+            jumpComponent = context.GetService<CharacterService>().GetCharacter().Get<IJumpComponent>();
+        }
+        void IStartGame.OnStartGame()
+        {
+            JumpHandler += Jump;
+        }
+        void IEndGame.OnEndGame()
+        {
+            JumpHandler -= Jump;
+        }
+
         private void Jump()
         {
-            entity.Get<IJumpComponent>().Jump();
+            jumpComponent.Jump();
         }
         public void OnJump(InputAction.CallbackContext context)
         {
             if (!context.performed)
-                return;
-
-
+                return; 
             if (context.action.name == "Jump")
             {
-                Jump();
+                JumpHandler?.Invoke();
             }
         }
     }
