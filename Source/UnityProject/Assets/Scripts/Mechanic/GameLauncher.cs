@@ -5,16 +5,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartGameMechanic : MonoBehaviour
+public class GameLauncher : MonoBehaviour
 {
     [SerializeField]
     private TimerBehaviour countdown;
     [SerializeField]
     private GameContext context;
 
-    private void Awake()
+    private void OnEnable()
     {
         countdown.OnFinished +=StartGame;
+    }
+
+    private void OnDisable()
+    {
+        countdown.OnFinished -=StartGame;
     }
 
     [Button]
