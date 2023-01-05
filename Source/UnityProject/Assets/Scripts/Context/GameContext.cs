@@ -13,11 +13,13 @@ namespace Assets.Scripts.Context
     {
         [ReadOnly]
         [ShowInInspector]
-        private readonly List<object> listeners = new();
+        private readonly List<object> gameObjects = new(); 
+
+
 
         public  T GetService<T>()
         {
-            foreach (var listener in listeners)
+            foreach (var listener in gameObjects)
             {
                 if (listener is T service)
                 {
@@ -31,17 +33,17 @@ namespace Assets.Scripts.Context
 
         public void AddListener(object listener)
         {
-            listeners.Add(listener);
+            gameObjects.Add(listener);
         }
 
         public void RemoveListener(object listener)
         {
-            listeners.Remove(listener);
+            gameObjects.Remove(listener);
         }
          
         public void ConstructServices()
         {
-            foreach (var listener in listeners)
+            foreach (var listener in gameObjects)
             {
                 if (listener is IConstructListener constructListener)
                 {
@@ -52,7 +54,7 @@ namespace Assets.Scripts.Context
          
         public void GameStart()
         {
-            foreach (var listener in listeners)
+            foreach (var listener in gameObjects)
             {
                 if(listener is IStartGame startGame)
                 {
@@ -65,7 +67,7 @@ namespace Assets.Scripts.Context
          
         public void EndGame()
         {
-            foreach (var listener in listeners)
+            foreach (var listener in gameObjects)
             {
                 if (listener is IEndGame endGame)
                 {

@@ -3,6 +3,7 @@ using Assets.Scripts.Context;
 using Assets.Scripts.Entities;
 using Assets.Scripts.Services;
 using Entities;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,35 +16,33 @@ namespace Assets.Scripts.Controllers
 {
     public class CharacterAtackController : MonoBehaviour , IStartGame, IEndGame, IConstructListener
     { 
+
+        [ReadOnly]
+        [ShowInInspector]
+        private const string ATACK_INPUT_KEY = "Atack";
+
         private IAtackComponent atackComponent;
 
-        private event OnAtackHandler AtackHandler;
-        private delegate void OnAtackHandler();
+        private InputAction atackInput;
 
         void IConstructListener.Construct(GameContext context)
         {
             atackComponent = context.GetService<CharacterService>().GetCharacter().Get<IAtackComponent>();
+            atackInput = context.GetService<UnityEngine.InputSystem.PlayerInput>().actions[ATACK_INPUT_KEY];
         }
         void IStartGame.OnStartGame()
         {
-            AtackHandler += Atack;
+            this.enabled = true;
+            atackInput.performed += Atack;
         }
         void IEndGame.OnEndGame()
         {
-            AtackHandler -= Atack;
+            this.enabled = true;
+            atackInput.performed += Atack;
         }
+         
 
-        public void OnAtack(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-                return;
-            if (context.action.name == "Atack")
-            {
-                AtackHandler?.Invoke();
-            }
-        }
-
-        private void Atack()
+        private void Atack(InputAction.CallbackContext context)
         {
             atackComponent.Atack();
         }

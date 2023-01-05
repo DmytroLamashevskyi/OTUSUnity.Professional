@@ -3,6 +3,7 @@ using Assets.Scripts.Context;
 using Assets.Scripts.Entities;
 using Assets.Scripts.Services;
 using Entities;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,35 +17,35 @@ namespace Assets.Scripts.Controllers
 {
     public class CharacterJumpController : MonoBehaviour, IStartGame, IEndGame, IConstructListener
     {
+        [ReadOnly]
+        [ShowInInspector]
+        private const string JUMP_INPUT_KEY = "Jump";
+
         private IJumpComponent jumpComponent;
-        private event OnJumpHandler JumpHandler;
-        private delegate void OnJumpHandler();
+
+        private InputAction jumpInput;
 
         void IConstructListener.Construct(GameContext context)
         {
             jumpComponent = context.GetService<CharacterService>().GetCharacter().Get<IJumpComponent>();
-        }
-        void IStartGame.OnStartGame()
-        {
-            JumpHandler += Jump;
-        }
-        void IEndGame.OnEndGame()
-        {
-            JumpHandler -= Jump;
+            jumpInput = context.GetService<UnityEngine.InputSystem.PlayerInput>().actions[JUMP_INPUT_KEY];
         }
 
-        private void Jump()
+        void IStartGame.OnStartGame()
+        {
+            this.enabled = true;
+            jumpInput.performed += Jump;
+        }
+
+        void IEndGame.OnEndGame()
+        {
+            this.enabled = false;
+            jumpInput.performed -= Jump;
+        }
+
+        private void Jump(InputAction.CallbackContext context)
         {
             jumpComponent.Jump();
-        }
-        public void OnJump(InputAction.CallbackContext context)
-        {
-            if (!context.performed)
-                return; 
-            if (context.action.name == "Jump")
-            {
-                JumpHandler?.Invoke();
-            }
-        }
+        } 
     }
 } 

@@ -17,39 +17,43 @@ namespace Assets.Scripts.Controllers
 {
     public sealed class CharacterMoveController : MonoBehaviour, IStartGame, IEndGame, IConstructListener
     {
+        [ReadOnly]
+        [ShowInInspector]
+        private const string MOVE_INPUT_KEY = "Movement";
+
         [SerializeField]
         private int speed;
 
-        private IMoveComponent moveComponent;
+        private IMoveComponent moveComponent;  
 
-        private event OnMoveHandler MoveHandler;
-        private delegate void OnMoveHandler(Vector3 direction);
+        private InputAction moveInput;
 
-        void IConstructListener.Construct(GameContext context)
+        private void Awake()
+        {
+            this.enabled = false;
+        }
+
+        private void Update()
+        {
+            var direction = moveInput.ReadValue<Vector3>();
+            var velocity = direction * Time.deltaTime * speed;
+            moveComponent.Move(velocity); 
+        }
+
+        public void Construct(GameContext context)
         {
             moveComponent = context.GetService<CharacterService>().GetCharacter().Get<IMoveComponent>();
-        } 
-
-        void IStartGame.OnStartGame()
-        {
-            MoveHandler += Move;
-        }
-        void IEndGame.OnEndGame()
-        {
-            MoveHandler -= Move;
-        }
-        //Метод который добавленн в инспекторе к инпут системе
-        public void OnMove(InputAction.CallbackContext context)
-        {
-            var direction = context.ReadValue<Vector3>();
-            MoveHandler?.Invoke(direction);
+            moveInput = context.GetService<UnityEngine.InputSystem.PlayerInput>().actions[MOVE_INPUT_KEY];
         }
 
-        //Метод который двигает Ентити 
-        private void Move(Vector3 direction)
+        public void OnEndGame()
         {
-            var velocity = direction * Time.deltaTime * speed;
-            moveComponent.Move(velocity);
+            this.enabled = false;
+        }
+
+        public void OnStartGame()
+        {
+            this.enabled = true;
         }
 
     }
