@@ -14,6 +14,7 @@ public class GameLauncher : MonoBehaviour
 
     private void OnEnable()
     {
+        context.ConstructServices();
         countdown.OnFinished +=StartGame;
     }
 
@@ -31,7 +32,6 @@ public class GameLauncher : MonoBehaviour
     private void StartGame()
     {
         Debug.Log("Game Started");
-        context.ConstructServices();
         context.GameStart();
     }
 }

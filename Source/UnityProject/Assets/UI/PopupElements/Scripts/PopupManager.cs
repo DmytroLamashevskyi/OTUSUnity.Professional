@@ -30,9 +30,9 @@ namespace Popups
                 return;
             }
 
-            var popup= this.activePopups[name];
-            popup.gameObject.SetActive(false);
-            popup.Hide();
+            var popup= this.FindPopup(name);
+            popup.gameObject.SetActive(true);
+            popup.Show(args);
             this.activePopups.Add(name, popup);
         }
 
@@ -43,6 +43,10 @@ namespace Popups
             {
                 return;
             }
+            var popup = this.FindPopup(name);
+            popup.gameObject.SetActive(false);
+            popup.Hide();
+            this.activePopups.Remove(name);
         }
 
         private bool IsPopupActive(PopupName name)
@@ -63,7 +67,7 @@ namespace Popups
             throw new Exception($"Popup with {popup.name} wasn't found in Popups pool.");
         }
 
-        private Popup FindName(PopupName name)
+        private Popup FindPopup(PopupName name)
         {
             foreach (var holder in allPopups)
             {
